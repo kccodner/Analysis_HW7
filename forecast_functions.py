@@ -91,7 +91,10 @@ def fit_longterm_avg_model(train_df):
     """Return the mean streamflow (cfs) over the entire training period."""
     return float(train_df['streamflow_cfs'].mean())
 
-
+def fit_monthly_avg(train_df):
+    """Return the mean streamflow (cfs) for each month within the training period"""
+    return train_df.groupby(train_df.index.month)['streamflow_cfs'].mean()
+    
 def make_5day_forecast_longterm(mean_flow, forecast_date, n_days=5):
     """Return DataFrame with the long-term mean flow for every forecast day."""
     dates = pd.date_range(start=forecast_date, periods=n_days, freq='D')
