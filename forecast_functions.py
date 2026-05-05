@@ -99,6 +99,20 @@ def make_5day_forecast_longterm(mean_flow, forecast_date, n_days=5):
     dates = pd.date_range(start=forecast_date, periods=n_days, freq='D')
     return pd.DataFrame({'Forecast_cfs': mean_flow}, index=dates)
 
+def make_5day_forecast_recent_average(recent_df, forecast_date, n_days=5, window_days=5):
+    """
+    Return a 5-day forecast where each forecasted day is equal to the
+    average streamflow from the previous window_days observations.
+    """
+    if len(recent_df) < window_days:
+        raise ValueError(
+            f"Need at least {window_days} days of recent data to make this forecast; "
+            f"only {len(recent_df)} found."
+        )
+
+    recent_average = float(recent_df['streamflow_cfs'].iloc[-window_days:].mean())
+    dates = pd.date_range(start=forecast_date, periods=n_days, freq='D')
+    return pd.DataFrame({'Forecast_cfs': recent_average}, index=dates)
 
 def compute_metrics(observed_cfs, predicted_cfs):
     """Return dict with RMSE, R², and NSE (Nash-Sutcliffe Efficiency)."""

@@ -20,7 +20,7 @@ TEST_END="2024-12-31"
 FORECAST_DATE="2024-04-30"   # First day of the 5-day forecast (YYYY-MM-DD)
 REFIT_MODEL="True"           # True = re-fit from scratch | False = use saved_model.pkl
 RUN_VALIDATION="True"        # True = show validation plots and metrics
-MODEL="longterm_avg"         # longterm_avg = training mean
+MODEL="recent_5day_avg"      # longterm_avg = training mean, recent_5day_avg = average of last 5 days in training data, ar = autoregressive model
 
 # =============================================================================
 # RUN WORKFLOW — no need to edit below this line
@@ -29,7 +29,7 @@ MODEL="longterm_avg"         # longterm_avg = training mean
 read -p  "HydroFrame email: " EMAIL
 read -sp "HydroFrame PIN:   " PIN && echo
 
-if [ "$REFIT_MODEL" = "True" ] || [ "$RUN_VALIDATION" = "True" ]; then
+if [ "$MODEL" = "longterm_avg" ] && { [ "$REFIT_MODEL" = "True" ] || [ "$RUN_VALIDATION" = "True" ]; }; then
     python train_model.py \
         --email        "$EMAIL"       \
         --pin          "$PIN"         \
@@ -42,6 +42,7 @@ if [ "$REFIT_MODEL" = "True" ] || [ "$RUN_VALIDATION" = "True" ]; then
         --model        "$MODEL"       \
         --refit        "$REFIT_MODEL" \
         --validate     "$RUN_VALIDATION"
+
 fi
 
 python generate_forecast.py \
